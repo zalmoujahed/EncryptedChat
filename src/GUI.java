@@ -1,4 +1,5 @@
+import javax.swing.JFrame;
 
-public class GUI {
+public class GUI extends JFrame{
 
 }
