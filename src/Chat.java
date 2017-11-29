@@ -1,6 +1,6 @@
 import javax.swing.JFrame;
 
-public class Main {
+public class Chat {
 
 	public static void main(String[] args) {
 		
