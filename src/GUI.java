@@ -29,7 +29,7 @@ public class GUI extends JFrame{
 		panel = new JPanel();
 		panel.setLayout(new GridLayout(1, 2));
 		
-		serverButton = new JButton("Server");
+		serverButton = new JButton("Connect as Server");
 		serverButton.addActionListener( new  ActionListener(){
 			public void actionPerformed( ActionEvent event ){
 				Server = new ServerGUI();
@@ -37,11 +37,11 @@ public class GUI extends JFrame{
 	    		
 	        }
 		});
-		clientButton = new JButton("Client");
+		clientButton = new JButton("Connect as Client");
 		clientButton.addActionListener( new  ActionListener(){
 			public void actionPerformed( ActionEvent event ){
 				Client = new ClientGUI();
-				Client.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				Client.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	    		
 	        }
 		});
@@ -59,7 +59,7 @@ public class GUI extends JFrame{
 		menuBar.add(Menu.CreateFileMenu());
 		menuBar.add(Menu.CreateHelpMenu());
 		
-		setSize( 1000, 600 );
+		setSize( 500, 300 );
 
 		setVisible( true );
 	}

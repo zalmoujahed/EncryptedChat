@@ -5,7 +5,7 @@ public class Chat {
 	public static void main(String[] args) {
 		
 		GUI gui = new GUI();
-		gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		gui.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 	}
 
