@@ -1,12 +1,10 @@
-/GUI.class
-/Main.class
-/Network.class
-/Server.class
 /CentralServer.class
-/Client.class
-/Network1.class
 /Chat.class
+/Client.class
+/GUI.class
 /Menu$1.class
 /Menu$2.class
 /Menu$3.class
 /Menu.class
+/Network.class
+/Network1.class
