@@ -1,22 +1,26 @@
 
-import java.net.*; 
+import java.net.*;
+import java.util.Vector;
 import java.io.*; 
 
 public class Client {
 
+	String clientID;
 	String receivedLabel;
 	Socket clientSocket = null;
 	PrintWriter output = null;
 	BufferedReader input = null;
-	boolean isServer = false;
+	Vector<PrintWriter> otherClients;
 
-	public Client(int portServer)
+
+	public Client(Socket s, Vector<PrintWriter> oSL)
 	{
+		clientSocket = s;
+		otherClients = oSL;
 	}
 
 	public String getMachineName()
 	{
-
 		return null;
 	}
 
@@ -45,7 +49,6 @@ public class Client {
 		while((label = input.readLine()) != null)
 		{
 			retreivedData = label;
-			//System.out.println("This is the data retrieved");
 		}
 	}
 	

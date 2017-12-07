@@ -12,12 +12,15 @@ public class ServerGUI extends JFrame {
   JLabel machineInfo;
   JLabel portInfo;
   JTextArea history;
+  JTextArea clientList;
   private boolean running;
 
   // Network Items
   boolean serverContinue;
   ServerSocket serverSocket;
   Vector <PrintWriter> outStreamList;
+  
+  Vector<Client> clients;
 
   
    // set up ServerGUI
@@ -25,83 +28,98 @@ public class ServerGUI extends JFrame {
    {
       super( "Echo Server" );
       
-      // set up the shared outStreamList
-      outStreamList = new Vector<PrintWriter>();
-
-      // get content pane and set its layout
-      Container container = getContentPane();
-      container.setLayout( new FlowLayout() );
-
-      // create buttons
-      running = false;
-      ssButton = new JButton( "Start Listening" );
-      ssButton.addActionListener( e -> doButton (e) );
-      container.add( ssButton );
-
-      String machineAddress = null;
-      try
-      {  
-        InetAddress addr = InetAddress.getLocalHost();
-        machineAddress = addr.getHostAddress();
-      }
-      catch (UnknownHostException e)
-      {
-        machineAddress = "127.0.0.1";
-      }
-      machineInfo = new JLabel (machineAddress);
-      container.add( machineInfo );
-      portInfo = new JLabel (" Not Listening ");
-      container.add( portInfo );
-
-      history = new JTextArea ( 10, 40 );
-      history.setEditable(false);
-      container.add( new JScrollPane(history) );
-
+      initializeGUI();
+      
       setSize( 500, 250 );
       setVisible( true );
 
-   } // end CountDown constructor
+   }
+   //__________________________________________________________________________________//
+   void initializeGUI(){
+	      // set up the shared outStreamList
+	      outStreamList = new Vector<PrintWriter>();
+	      clients = new Vector<Client>();
 
-    // handle button event
-    public void doButton( ActionEvent event )
-    {
-       if (running == false)
-       {
-         new ConnectionThread (this);
-       }
-       else
-       {
-         serverContinue = false;
-         ssButton.setText ("Start Listening");
-         portInfo.setText (" Not Listening ");
-       }
-    }
+	      // get content pane and set its layout
+	      Container container = getContentPane();
+	      container.setLayout( new FlowLayout() );
 
+	      // create buttons
+	      running = false;
+	      ssButton = new JButton( "Start Listening" );
+	      ssButton.addActionListener( e -> doButton (e) );
+	      container.add( ssButton );
+
+	      String machineAddress = null;
+	      try
+	      {  
+	        InetAddress addr = InetAddress.getLocalHost();
+	        machineAddress = addr.getHostAddress();
+	      }
+	      catch (UnknownHostException e)
+	      {
+	        machineAddress = "127.0.0.1";
+	      }
+	      machineInfo = new JLabel (machineAddress);
+	      container.add( machineInfo );
+	      portInfo = new JLabel (" Not Listening ");
+	      container.add( portInfo );
+
+	      // initialize history pane
+	      history = new JTextArea ( 10, 20 );
+	      history.setEditable(false);
+	      container.add( new JScrollPane(history) );
+	      
+	      //initialize client list pane
+	      clientList = new JTextArea(10, 20);
+	      clientList.setEditable(false);
+	      container.add(new JScrollPane(clientList));
+
+
+   }
+   //__________________________________________________________________________________//
+   //__________________________________________________________________________________//
+   
+   //__________________________________________________________________________________//
+   // handle button event
+	public void doButton( ActionEvent event )
+	{
+	   if (running == false)
+	   {
+	     new ConnectionThread ();
+	     running = true;
+	   }
+	   else
+	   {
+	     serverContinue = false;
+	     ssButton.setText ("Start Listening");
+	     portInfo.setText (" Not Listening ");
+	   }
+	}
+	//__________________________________________________________________________________//
 	class ConnectionThread extends Thread
 	 {
-	   ServerGUI ServerGUI;
 	   
-	   public ConnectionThread (ServerGUI es3)
+	   public ConnectionThread ()
 	   {
-	     ServerGUI = es3;
 	     start();
 	   }
 	   
 	   public void run()
 	   {
-	     ServerGUI.serverContinue = true;
+	     serverContinue = true;
 	     
 	     try 
 	     { 
-	       ServerGUI.serverSocket = new ServerSocket(0); 
-	       ServerGUI.portInfo.setText("Listening on Port: " + ServerGUI.serverSocket.getLocalPort());
+	       serverSocket = new ServerSocket(0); 
+	       portInfo.setText("Listening on Port: " + serverSocket.getLocalPort());
 	       System.out.println ("Connection Socket Created");
 	       try { 
-	         while (ServerGUI.serverContinue)
+	         while (serverContinue)
 	         {
 	           System.out.println ("Waiting for Connection");
-	           ServerGUI.ssButton.setText("Stop Listening");
-	           new CommunicationThread (ServerGUI.serverSocket.accept(), ServerGUI, ServerGUI.outStreamList); 
+	           ssButton.setText("Stop Listening");
+	           new CommunicationThread (serverSocket.accept(), outStreamList); 
 	         }
 	       } 
 	       catch (IOException e) 
@@ -118,7 +136,7 @@ public class ServerGUI extends JFrame {
 	     finally
 	     {
 	       try {
-	         ServerGUI.serverSocket.close(); 
+	         serverSocket.close(); 
 	       }
 	       catch (IOException e)
 	       { 
@@ -129,23 +147,23 @@ public class ServerGUI extends JFrame {
 	   }
 	 }
 	 
-	
+	//__________________________________________________________________________________//
 	class CommunicationThread extends Thread
 	{ 
 	 private Socket clientSocket;
-	 private ServerGUI ServerGUI;
 	 private Vector<PrintWriter> outStreamList;
 	
 	
-	
-	 public CommunicationThread (Socket clientSoc, ServerGUI ec3, 
-	                             Vector<PrintWriter> oSL)
+	 public CommunicationThread (Socket clientSoc, Vector<PrintWriter> oSL)
 	   {
-	    clientSocket = clientSoc;
-	    ServerGUI = ec3;
-	    outStreamList = oSL;
-	    ServerGUI.history.insert ("Comminucating with Port" + clientSocket.getLocalPort()+"\n", 0);
-	    start();
+		 
+		 Client c = new Client(clientSoc, oSL);
+		 clients.add(c);
+		 
+		 clientSocket = clientSoc;
+		 outStreamList = oSL;
+		 history.insert ("Comminucating with Port" + clientSocket.getLocalPort()+"\n", 0);
+		 start();
 	   }
 	
 	 public void run()
@@ -165,10 +183,10 @@ public class ServerGUI extends JFrame {
 	         while ((inputLine = in.readLine()) != null) 
 	             { 
 	              System.out.println ("Server: " + inputLine); 
-	              ServerGUI.history.insert (inputLine+"\n", 0);
+	              history.insert (inputLine+"\n", 0);
 	              
 	              // Loop through the outStreamList and send to all "active" streams
-	              //out.println(inputLine); 
+	
 	              for ( PrintWriter out1: outStreamList )
 	              {
 	                System.out.println ("Sending Message");
@@ -179,7 +197,7 @@ public class ServerGUI extends JFrame {
 	                  break; 
 	
 	              if (inputLine.equals("End Server.")) 
-	                  ServerGUI.serverContinue = false; 
+	                  serverContinue = false; 
 	             } 
 	
 	         outStreamList.remove(out);
@@ -190,15 +208,14 @@ public class ServerGUI extends JFrame {
 	    catch (IOException e) 
 	        { 
 	         System.err.println("Problem with Communication Server");
-	         	        } 
-	    }
-	 }
-
- } // end class EchoServer4
-
-
-
-
-
-
- 
+		        } 
+		    }
+		 }
+	
+	 } 
+	
+	
+	
+	
+	
+	 
