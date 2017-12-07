@@ -141,8 +141,16 @@ public class ClientGUI extends JFrame implements ActionListener
 	{
 		try
 		{
+			if(toID.getText().equals("")){
+				
+				return;
+			}
+			
+			else if(!otherClients.contains(toID)){
+				
+			}
 			String msg = encrypt(message.getText());
-			out.println("m " + toID.getText() + " " + ID + " >>begin<< " + msg + " >>end<<");
+			out.println("m " + toID.getText() + " " + ID + " >>begin<< " + msg );
 			message.setText("");
 		}
 		catch (Exception e) 
