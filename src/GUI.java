@@ -33,10 +33,12 @@ public class GUI extends JFrame{
 		serverButton.addActionListener( new  ActionListener(){
 			public void actionPerformed( ActionEvent event ){
 				Server = new ServerGUI();
+				serverButton.setEnabled(false);
 				Server.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    		
 	        }
 		});
+		
 		clientButton = new JButton("Connect as Client");
 		clientButton.addActionListener( new  ActionListener(){
 			public void actionPerformed( ActionEvent event ){

@@ -8,5 +8,11 @@
 /CommunicationReadThread.class
 /GUI$1.class
 /GUI$2.class
+<<<<<<< HEAD
 /ClientGUI.class
 /ServerGUI.class
+=======
+/ServerGUI$CommunicationThread.class
+/ServerGUI$ConnectionThread.class
+/ClientGUI$CommunicationReadThread.class
+>>>>>>> 4b9dae64bcfe0ad5a1b01722af84d2a9ba4ed274
