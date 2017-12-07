@@ -124,7 +124,8 @@ public class ClientGUI extends JFrame implements ActionListener
 	{
 		try
 		{
-			out.println(message.getText());
+			String mes = encrypt(message.getText());
+			out.println("m " + toID.getText() + " " + ID + " " + message.getText());
 		}
 		catch (Exception e) 
 		{
@@ -152,6 +153,7 @@ public class ClientGUI extends JFrame implements ActionListener
 
 				sendButton.setEnabled(true);
 				connected = true;
+				history.setText(null);
 				connectButton.setText("Disconnect from Server");
 			} catch (NumberFormatException e) {
 				history.insert ( "Server Port must be an integer\n", 0);
@@ -212,6 +214,19 @@ public class ClientGUI extends JFrame implements ActionListener
 		else if(input.startsWith("d")){
 			removeDisconnected(input);
 		}
+		else if(input.startsWith("m")){
+			
+			String[] sub = input.split(" ");
+			
+			String fromID = sub[1];
+			
+			int index = input.indexOf(">>begin<<");		//size 9
+			
+			String in = input.substring(index+9);
+			
+			String msg = decrypt(input);
+			history.append("Client " + fromID + ": " + msg);
+		}
 		
 		updateClientList();
 		
@@ -244,7 +259,19 @@ public class ClientGUI extends JFrame implements ActionListener
 		
 	}
 	//________________________________________________________________________//
+	String decrypt(String msg){
+		
+		String result = msg;
+		
+		return result;
+		
+	}
 	//________________________________________________________________________//
+	String encrypt(String msg){
+		String result = msg;
+		
+		return result;
+	}
 	//________________________________________________________________________//
 	void updateClientList(){
 
@@ -292,8 +319,6 @@ public class ClientGUI extends JFrame implements ActionListener
 			} 
 		}
 	} 
-
-	//"m 45 >>begin<< he ll o  th er e >>end<<"
 
 } 
 

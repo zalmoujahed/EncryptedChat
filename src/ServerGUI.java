@@ -104,8 +104,20 @@ public class ServerGUI extends JFrame {
 	//__________________________________________________________________________________//
 	void relayMessage(String s){
 		
-		//get ids
-		//send message to appropriate client
+		String [] sub = s.split(" ");
+		System.out.println(s);
+		String toID = sub[1];
+		
+		s.replaceFirst(" " + toID, "");
+		
+		System.out.println(s);
+		
+		for(Client c: clients){
+			if(c.getID().equals(toID)){
+				c.sendMessage(s);
+				break;
+			}
+		}
 		
 	}	
 	//__________________________________________________________________________________//
@@ -261,14 +273,6 @@ public class ServerGUI extends JFrame {
 				{ 
 					processInput(inputLine);
 					history.insert (inputLine+"\n", 0);
-
-					// Loop through the outStreamList and send to all "active" streams
-
-					for ( PrintWriter out1: outStreamList )
-					{
-						System.out.println ("Sending Message");
-						out1.println (inputLine);
-					}
 
 					if (inputLine.equals("Bye.")) 
 						break; 
