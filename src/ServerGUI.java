@@ -32,7 +32,7 @@ public class ServerGUI extends JFrame {
 
 		initializeGUI();
 
-		setSize( 500, 250 );
+		setSize( 500, 500 );
 		setVisible( true );
 
 	}
@@ -69,12 +69,12 @@ public class ServerGUI extends JFrame {
 		container.add( portInfo );
 
 		// initialize history pane
-		history = new JTextArea ( 10, 20 );
+		history = new JTextArea ( 20, 30 );
 		history.setEditable(false);
 		container.add( new JScrollPane(history) );
 
 		//initialize client list pane
-		clientList = new JTextArea(10, 20);
+		clientList = new JTextArea(20, 10);
 		clientList.setEditable(false);
 		container.add(new JScrollPane(clientList));
 
@@ -82,7 +82,7 @@ public class ServerGUI extends JFrame {
 	}
 	//__________________________________________________________________________________//
 	public void updateClientList(){	
-		clientList.insert("" + curID + "\n", 0);			
+		clientList.insert("Client " + curID + "\n", 0);			
 	}
 	//__________________________________________________________________________________//
 

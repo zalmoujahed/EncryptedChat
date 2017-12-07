@@ -7,49 +7,46 @@ import javax.swing.*;
 public class ClientGUI extends JFrame implements ActionListener
 {  
   // GUI items
-  JButton sendButton;
-  JButton connectButton;
-  JTextField machineInfo;
-  JTextField portInfo;
-  JTextField message;
-  JTextArea history;
+  private JButton sendButton;
+  private JButton connectButton;
+  private JTextField machineInfo;
+  private JTextField portInfo;
+  private JTextField message;
+  private JTextField toID;
+  private JTextArea history;
+  private JTextArea clientList;
+
+  private JPanel panel;
 
   // Network Items
-  boolean connected;
-  Socket echoSocket;
-  PrintWriter out;
-  BufferedReader in;
+  private boolean connected;
+  private Socket echoSocket;
+  private PrintWriter out;
+  private BufferedReader in;
 
    // set up GUI
    public ClientGUI()
    {
-      super( "Echo Client" );
+      super( "Client" );
 
       // get content pane and set its layout
       Container container = getContentPane();
       container.setLayout (new BorderLayout ());
       
+      panel = new JPanel(new BorderLayout());
+      
+      clientList = new JTextArea(10, 10);
+      clientList.setEditable(false);
+      panel.add(new JScrollPane(clientList));
+      panel.add(new JLabel("Users connected"), BorderLayout.NORTH);
+      
       // set up the North panel
       JPanel upperPanel = new JPanel ();
-      upperPanel.setLayout (new GridLayout (4,2));
+      upperPanel.setLayout (new GridLayout (3,2));
       container.add (upperPanel, BorderLayout.NORTH);
       
       // create buttons
       connected = false;
-
-      upperPanel.add ( new JLabel ("Message: ", JLabel.RIGHT) );
-      message = new JTextField ("");
-      message.addActionListener( this );
-      upperPanel.add( message );
-      
-      sendButton = new JButton( "Send Message" );
-      sendButton.addActionListener( this );
-      sendButton.setEnabled (false);
-      upperPanel.add( sendButton );
-
-      connectButton = new JButton( "Connect to Server" );
-      connectButton.addActionListener( this );
-      upperPanel.add( connectButton );
                       
       upperPanel.add ( new JLabel ("Server Address: ", JLabel.RIGHT) );
       machineInfo = new JTextField ("127.0.0.1");
@@ -58,12 +55,40 @@ public class ClientGUI extends JFrame implements ActionListener
       upperPanel.add ( new JLabel ("Server Port: ", JLabel.RIGHT) );
       portInfo = new JTextField ("");
       upperPanel.add( portInfo );
+      
+      connectButton = new JButton( "Connect to Server" );
+      connectButton.addActionListener( this );
+      upperPanel.add(new JLabel(""));
+      upperPanel.add( connectButton );
+      
+      
+      // Set up lower panel
+      JPanel lowerPanel = new JPanel(new GridLayout(3, 2));
+      container.add (lowerPanel, BorderLayout.SOUTH);
+      
+      lowerPanel.add ( new JLabel ("Message: ", JLabel.RIGHT) );
+      message = new JTextField ("");
+      message.addActionListener( this );
+      lowerPanel.add( message );
+      
+      lowerPanel.add ( new JLabel ("Client ID: ", JLabel.RIGHT) );
+      toID = new JTextField ("");
+      toID.addActionListener( this );
+      lowerPanel.add( toID );
+      
+      sendButton = new JButton( "Send Message" );
+      sendButton.addActionListener( this );
+      sendButton.setEnabled (false);
+      lowerPanel.add( new JLabel(""));
+      lowerPanel.add( sendButton );
                       
-      history = new JTextArea ( 10, 40 );
+      history = new JTextArea ( 10, 30 );
       history.setEditable(false);
       container.add( new JScrollPane(history) ,  BorderLayout.CENTER);
+      container.add(panel, BorderLayout.EAST);
+      
 
-      setSize( 500, 250 );
+      setSize( 500, 500 );
       setVisible( true );
 
    } // end CountDown constructor
