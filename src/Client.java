@@ -5,64 +5,31 @@ import java.io.*;
 
 public class Client {
 
-	String clientID;
-	String receivedLabel;
-	Socket clientSocket = null;
-	PrintWriter output = null;
-	BufferedReader input = null;
-	Vector<PrintWriter> otherClients;
+	private String clientID;
+	private Socket clientSocket = null;
+	private PrintWriter output = null;
 
-
-	public Client(Socket s, Vector<PrintWriter> oSL)
+	public Client(Socket s, String id)
 	{
 		clientSocket = s;
-		otherClients = oSL;
+		clientID = id;
 	}
 
-	public String getMachineName()
-	{
-		return null;
-	}
-
-	public int getPortNumber()
-	{
-
-		return 0;
-	}
-
-	public void connectToServer(String machineName, int portNum) throws UnknownHostException, IOException
-	{
-		clientSocket = new Socket(machineName, portNum);
+	public String getID(){
+		return clientID;
 	}
 
 	//function to setup the streams
-	public void setupStreams(Socket clientSocket) throws IOException
+	public void setOutputStream(PrintWriter pw) 
 	{
-		output = new PrintWriter(clientSocket.getOutputStream(), true); 
-		input = new BufferedReader(new InputStreamReader( clientSocket.getInputStream())); 
+		output = pw;
+		 
 	}
-
-	public void receiveData(String retreivedData) throws IOException
-	{
-		String label = null;
-
-		while((label = input.readLine()) != null)
-		{
-			retreivedData = label;
-		}
-	}
-	
 
 	public void sendData(String data)
 	{
 		output.println(data);
-		System.out.println("Client sent: " + data + "\n");
+		System.out.println("Server sent: " + data );
 	}
 
-	public void closeConnections() throws IOException
-	{
-		output.close();
-		input.close();
-		clientSocket.close();
-	}
 }
