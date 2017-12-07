@@ -165,8 +165,9 @@ public class ServerGUI extends JFrame {
 
 		public CommunicationThread (Socket clientSoc)
 		{
-
-			Client c = new Client(clientSoc, "");
+			Random rand = new Random(); 
+			int value = rand.nextInt(100); 
+			Client c = new Client(clientSoc, ""+value);
 			clients.add(c);
 
 			clientSocket = clientSoc;

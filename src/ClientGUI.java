@@ -157,7 +157,6 @@ public class ClientGUI extends JFrame implements ActionListener
         gui = ec3;
         start();
         gui.history.insert ("Communicating with Port\n", 0);
-        
        }
 
      public void run()
