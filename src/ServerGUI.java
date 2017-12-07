@@ -108,8 +108,38 @@ public class ServerGUI extends JFrame {
 		//send out disconnection message
 		//update list
 		
+		history.insert(s, 0);
+		
+		
 	}
 	//__________________________________________________________________________________//
+	void broadcast(char type, String id){
+		
+		for(Client c: clients){
+			if(!c.getID().equals(id))
+				c.sendMessage(type + " "+ id);
+		}
+		
+	}
+	//__________________________________________________________________________________//
+	void initializeClient(PrintWriter output){
+		
+		//initialize client info
+		output.println("ic "+ curID);
+		
+		//initialize other clients' info
+		String others = "";
+		
+		for(Client c: clients){
+			if(!c.getID().equals(curID)){
+				others += " " + c.getID();
+			}
+		}
+		
+		output.println("io" + others + " >>end<<");
+		
+		broadcast('c', "" + curID);
+	}
 	
 	//__________________________________________________________________________________//
 	// handle button event
@@ -186,13 +216,14 @@ public class ServerGUI extends JFrame {
 
 		public CommunicationThread (Socket clientSoc)
 		{
-			Random rand = new Random(); 
-			int value = rand.nextInt(100); 
-			Client c = new Client(clientSoc, "" + curID);
-			updateClientList();
-
-			
+//			Random rand = new Random(); 
+//			int value = rand.nextInt(100); 
 			curID++;
+
+			c = new Client(clientSoc, "" + curID);
+			updateClientList();
+			
+			
 			clients.add(c);
 
 			clientSocket = clientSoc;
@@ -205,11 +236,15 @@ public class ServerGUI extends JFrame {
 		{
 			
 			try { 
-				PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true); 
+				PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true); 				
+				BufferedReader in = new BufferedReader( new InputStreamReader( clientSocket.getInputStream())); 
+				
+				c.setOutputStream(out);
 				outStreamList.add(out);
-
-				BufferedReader in = new BufferedReader( 
-						new InputStreamReader( clientSocket.getInputStream())); 
+				
+				// Send an initializing message to the newly connected client
+				initializeClient(out);
+				
 
 				String inputLine;  
 

@@ -26,7 +26,7 @@ public class Client {
 		 
 	}
 
-	public void sendData(String data)
+	public void sendMessage(String data)
 	{
 		output.println(data);
 		System.out.println("Server sent: " + data );
