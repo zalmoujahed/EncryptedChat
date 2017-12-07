@@ -18,7 +18,10 @@ public class ClientGUI extends JFrame implements ActionListener
 	private JTextArea clientList;
 	private JPanel panel;
 	private JLabel IDLabel;
-
+	private JTextField pText;
+	private JTextField qText;
+	
+	
 	// Network Items
 	private boolean connected;
 	private Socket echoSocket;
@@ -73,7 +76,7 @@ public class ClientGUI extends JFrame implements ActionListener
 
 
 		// Set up lower panel
-		JPanel lowerPanel = new JPanel(new GridLayout(3, 2));
+		JPanel lowerPanel = new JPanel(new GridLayout(4, 2));
 		container.add (lowerPanel, BorderLayout.SOUTH);
 
 		lowerPanel.add ( new JLabel ("Message: ", JLabel.RIGHT) );
@@ -86,6 +89,20 @@ public class ClientGUI extends JFrame implements ActionListener
 		toID.addActionListener( this );
 		lowerPanel.add( toID );
 
+		
+		pText = new JTextField ("");
+		JPanel p = new JPanel(new GridLayout(1,2));
+		p.add(new JLabel("P Value:"));
+		p.add(pText);
+		
+		qText = new JTextField ("");
+		JPanel q = new JPanel(new GridLayout(1,2));
+		q.add(new JLabel("Q Value:"));
+		q.add(qText);
+		
+		lowerPanel.add(p);
+		lowerPanel.add(q);
+		
 		sendButton = new JButton( "Send Message" );
 		sendButton.addActionListener( this );
 		sendButton.setEnabled (false);
@@ -98,7 +115,7 @@ public class ClientGUI extends JFrame implements ActionListener
 		container.add(panel, BorderLayout.EAST);
 
 
-		setSize( 500, 500 );
+		setSize( 500, 600 );
 		setVisible( true );
 
 	} // end CountDown constructor
@@ -124,8 +141,9 @@ public class ClientGUI extends JFrame implements ActionListener
 	{
 		try
 		{
-			String mes = encrypt(message.getText());
-			out.println("m " + toID.getText() + " " + ID + " " + message.getText());
+			String msg = encrypt(message.getText());
+			out.println("m " + toID.getText() + " " + ID + " >>begin<< " + msg + " >>end<<");
+			message.setText("");
 		}
 		catch (Exception e) 
 		{
