@@ -88,7 +88,6 @@ public class ClientGUI extends JFrame implements ActionListener
       try
       {
         out.println(message.getText());
-        //history.insert ("From Server: " + in.readLine() + "\n" , 0);
       }
       catch (Exception e) 
       {
@@ -145,55 +144,53 @@ public class ClientGUI extends JFrame implements ActionListener
 
         
     }
-
- } // end class EchoServer3
-
-// Class to handle socket reads
-//   THis class is NOT written as a nested class, but perhaps it should
-class CommunicationReadThread extends Thread
-{ 
- //private Socket clientSocket;
- private ClientGUI gui;
- private BufferedReader in;
+    class CommunicationReadThread extends Thread
+    { 
+     //private Socket clientSocket;
+     private ClientGUI gui;
+     private BufferedReader in;
 
 
- public CommunicationReadThread (BufferedReader inparam, ClientGUI ec3)
-   {
-    in = inparam;
-    gui = ec3;
-    start();
-    gui.history.insert ("Communicating with Port\n", 0);
-    
-   }
+     public CommunicationReadThread (BufferedReader inparam, ClientGUI ec3)
+       {
+        in = inparam;
+        gui = ec3;
+        start();
+        gui.history.insert ("Communicating with Port\n", 0);
+        
+       }
 
- public void run()
-   {
-    System.out.println ("New Communication Thread Started");
+     public void run()
+       {
+        System.out.println ("New Communication Thread Started");
 
-    try {          
-         String inputLine; 
+        try {          
+             String inputLine; 
 
-         while ((inputLine = in.readLine()) != null) 
-             { 
-              //history.insert ("From Server: " + in.readLine() + "\n" , 0);
-              System.out.println ("Client: " + inputLine); 
-              gui.history.insert ("From Server: " + inputLine + "\n", 0);
+             while ((inputLine = in.readLine()) != null) 
+                 { 
+                  //history.insert ("From Server: " + in.readLine() + "\n" , 0);
+                  System.out.println ("Client: " + inputLine); 
+                  gui.history.insert ("From Server: " + inputLine + "\n", 0);
 
-              if (inputLine.equals("Bye.")) 
-                  break; 
+                  if (inputLine.equals("Bye.")) 
+                      break; 
 
-             } 
- 
-         in.close(); 
-         //clientSocket.close(); 
-        } 
-    catch (IOException e) 
-        { 
-         System.err.println("Problem with Client Read");
-         //System.exit(1); 
-        } 
-    }
-} 
+                 } 
+     
+             in.close(); 
+             //clientSocket.close(); 
+            } 
+        catch (IOException e) 
+            { 
+             System.err.println("Problem with Client Read");
+             //System.exit(1); 
+            } 
+        }
+    } 
+
+
+ } 
 
 
 
