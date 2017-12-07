@@ -2,7 +2,7 @@
 import java.net.*; 
 import java.io.*; 
 
-public class CentralServer extends Thread implements Network1{
+public class CentralServer extends Thread {
 	
 	private static boolean serverContinue = true;
 	private Socket clientSocket;

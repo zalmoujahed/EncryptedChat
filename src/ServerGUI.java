@@ -14,7 +14,7 @@ public class ServerGUI extends JFrame {
 	JTextArea history;
 	JTextArea clientList;
 	private boolean running;
-	int curID = 1; 
+	int curID = 10000; 
 
 	// Network Items
 	boolean serverContinue;
@@ -28,7 +28,7 @@ public class ServerGUI extends JFrame {
 	// set up ServerGUI
 	public ServerGUI()
 	{
-		super( "Echo Server" );
+		super( "Server" );
 
 		initializeGUI();
 
@@ -81,10 +81,8 @@ public class ServerGUI extends JFrame {
 
 	}
 	//__________________________________________________________________________________//
-	public void updateClientList(){
-	
-		clientList.insert("" + curID + "\n", 0);
-			
+	public void updateClientList(){	
+		clientList.insert("" + curID + "\n", 0);			
 	}
 	//__________________________________________________________________________________//
 

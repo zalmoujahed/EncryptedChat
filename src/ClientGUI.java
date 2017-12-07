@@ -110,7 +110,7 @@ public class ClientGUI extends JFrame implements ActionListener
                                         echoSocket.getInputStream()));
             
             // start a new thread to read from the socket
-            new CommunicationReadThread (in, this);
+            new CommunicationReadThread ();
             
             sendButton.setEnabled(true);
             connected = true;
@@ -146,17 +146,11 @@ public class ClientGUI extends JFrame implements ActionListener
     }
     class CommunicationReadThread extends Thread
     { 
-     //private Socket clientSocket;
-     private ClientGUI gui;
-     private BufferedReader in;
-
-
-     public CommunicationReadThread (BufferedReader inparam, ClientGUI ec3)
+ 
+     public CommunicationReadThread ()
        {
-        in = inparam;
-        gui = ec3;
         start();
-        gui.history.insert ("Communicating with Port\n", 0);
+        history.insert ("Communicating with Port\n", 0);
        }
 
      public void run()
@@ -169,8 +163,7 @@ public class ClientGUI extends JFrame implements ActionListener
              while ((inputLine = in.readLine()) != null) 
                  { 
                   //history.insert ("From Server: " + in.readLine() + "\n" , 0);
-                  System.out.println ("Client: " + inputLine); 
-                  gui.history.insert ("From Server: " + inputLine + "\n", 0);
+                  history.insert ("From Server: " + inputLine + "\n", 0);
 
                   if (inputLine.equals("Bye.")) 
                       break; 
@@ -183,11 +176,11 @@ public class ClientGUI extends JFrame implements ActionListener
         catch (IOException e) 
             { 
              System.err.println("Problem with Client Read");
-             //System.exit(1); 
-            } 
+                         } 
         }
     } 
 
+    //"m 45 >>begin<< he ll o  th er e >>end<<"
 
  } 
 
