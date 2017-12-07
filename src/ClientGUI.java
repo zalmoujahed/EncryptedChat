@@ -242,8 +242,8 @@ public class ClientGUI extends JFrame implements ActionListener
 			
 			String in = input.substring(index+9);
 			
-			String msg = decrypt(input);
-			history.append("Client " + fromID + ": " + msg);
+			String msg = decrypt(in);
+			history.append("Client " + fromID + ": " + msg + "\n");
 		}
 		
 		updateClientList();
