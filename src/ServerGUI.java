@@ -14,6 +14,7 @@ public class ServerGUI extends JFrame {
 	JTextArea history;
 	JTextArea clientList;
 	private boolean running;
+	int curID = 1; 
 
 	// Network Items
 	boolean serverContinue;
@@ -81,13 +82,9 @@ public class ServerGUI extends JFrame {
 	}
 	//__________________________________________________________________________________//
 	public void updateClientList(){
-		
-		clientList.removeAll();
-		
-		for(Client c : clients){
-			clientList.insert(c.getID(), 0);
-		}
-		
+	
+		clientList.insert("" + curID + "\n", 0);
+			
 	}
 	//__________________________________________________________________________________//
 
@@ -130,6 +127,7 @@ public class ServerGUI extends JFrame {
 					{
 						ssButton.setText("Stop Listening");
 						new CommunicationThread (serverSocket.accept()); 
+						
 					}
 				} 
 				catch (IOException e) 
@@ -167,11 +165,16 @@ public class ServerGUI extends JFrame {
 		{
 			Random rand = new Random(); 
 			int value = rand.nextInt(100); 
-			Client c = new Client(clientSoc, ""+value);
+			Client c = new Client(clientSoc, "" + curID);
+			updateClientList();
+
+			
+			curID++;
 			clients.add(c);
 
 			clientSocket = clientSoc;
 			history.insert ("Comminucating with Port" + clientSocket.getLocalPort()+"\n", 0);
+						
 			start();
 		}
 
