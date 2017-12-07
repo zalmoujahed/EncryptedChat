@@ -1,4 +1,5 @@
-import java.net.*; 
+import java.net.*;
+import java.util.Vector;
 import java.io.*; 
 import java.awt.*;
 import java.awt.event.*;
@@ -15,7 +16,6 @@ public class ClientGUI extends JFrame implements ActionListener
   private JTextField toID;
   private JTextArea history;
   private JTextArea clientList;
-
   private JPanel panel;
 
   // Network Items
@@ -23,11 +23,18 @@ public class ClientGUI extends JFrame implements ActionListener
   private Socket echoSocket;
   private PrintWriter out;
   private BufferedReader in;
+  
+  //Client info
+  String ID = "";
+  Vector<String> otherClients;
+  
 
    // set up GUI
    public ClientGUI()
    {
       super( "Client" );
+      
+      otherClients = new Vector<String>();
 
       // get content pane and set its layout
       Container container = getContentPane();
@@ -150,10 +157,19 @@ public class ClientGUI extends JFrame implements ActionListener
         }
 
       }
-      else
+      else	// Disconnect from server
       {
         try 
         {
+        	try
+            {
+              out.println("d " + ID);
+            }
+            catch (Exception e) 
+            {
+              history.insert ("Error in processing message ", 0);
+            }
+
           out.close();
           in.close();
           echoSocket.close();
@@ -201,7 +217,7 @@ public class ClientGUI extends JFrame implements ActionListener
         catch (IOException e) 
             { 
              System.err.println("Problem with Client Read");
-                         } 
+            } 
         }
     } 
 

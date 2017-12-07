@@ -85,7 +85,32 @@ public class ServerGUI extends JFrame {
 		clientList.insert("Client " + curID + "\n", 0);			
 	}
 	//__________________________________________________________________________________//
-
+	void processInput(String input){
+		
+		if(input.charAt(0) == 'm'){
+			relayMessage(input);
+		}
+		else if(input.charAt(0) == 'd'){
+			disconnectClient(input);
+		}
+		
+	}
+	//__________________________________________________________________________________//
+	void relayMessage(String s){
+		
+		//get ids
+		//send message to appropriate client
+		
+	}	
+	//__________________________________________________________________________________//
+	void disconnectClient(String s){
+		
+		//send out disconnection message
+		//update list
+		
+	}
+	//__________________________________________________________________________________//
+	
 	//__________________________________________________________________________________//
 	// handle button event
 	public void doButton( ActionEvent event )
@@ -203,8 +228,10 @@ public class ServerGUI extends JFrame {
 					if (inputLine.equals("Bye.")) 
 						break; 
 
-					if (inputLine.equals("End Server.")) 
+					if (inputLine.equals("End Server.")) {
 						serverContinue = false; 
+						break;
+					}
 				} 
 
 				outStreamList.remove(out);
