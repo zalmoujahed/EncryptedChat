@@ -170,12 +170,16 @@ public class ClientGUI extends JFrame implements ActionListener
 				try
 				{
 					out.println("d " + ID);
+					
 				}
 				catch (Exception e) 
 				{
 					history.insert ("Error in processing message ", 0);
 				}
 
+				otherClients.removeAllElements();
+				clientList.setText(null);
+				history.insert("You have been disconnected from the server\n", 0);
 				out.close();
 				in.close();
 				echoSocket.close();
@@ -199,37 +203,56 @@ public class ClientGUI extends JFrame implements ActionListener
 			IDLabel.setText("Your client ID: " + ID);
 		}
 		else if(input.startsWith("io")){	//initialize otherClients
-						
-			String[] otherIDs = input.split(" ");
-			int i = 1;
-			while(!otherIDs[i].equals(">>end<<")){
-				if(!otherIDs[i].equals(ID))
-					clientList.append("Client " + otherIDs[i] + "\n");
-				i++;
-			}
+			initializeClientList(input);
 		}
 		
 		else if(input.startsWith("c")){
-			
-			String id = input.substring(2);
-			history.insert("Client " + id + " connected to the server\n", 0);
-			clientList.append("Client " + id + "\n");
-			
+			addNewlyConnected(input);			
 		}
 		else if(input.startsWith("d")){
-			
+			removeDisconnected(input);
 		}
 		
 		updateClientList();
 		
 	}
 	//________________________________________________________________________//
+	void initializeClientList(String input){
+		
+		String[] otherIDs = input.split(" ");
+		int i = 1;
+		while(!otherIDs[i].equals(">>end<<")){
+			if(!otherIDs[i].equals(ID)){
+				otherClients.add(otherIDs[i]);
+			}
+			i++;
+		}
+	}
 	//________________________________________________________________________//
+	void addNewlyConnected(String input){
+		
+		String id = input.substring(2);
+		history.insert("Client " + id + " connected to the server\n", 0);
+		otherClients.add(id);
+		
+	}
 	//________________________________________________________________________//
+	void removeDisconnected(String input){
+		
+		String id = input.substring(2);
+		otherClients.remove(id);
+		
+	}
 	//________________________________________________________________________//
 	//________________________________________________________________________//
 	//________________________________________________________________________//
 	void updateClientList(){
+
+		clientList.setText(null);
+		
+		for(String s: otherClients){
+			clientList.append("Client " + s + "\n");
+		}
 		
 	}
 	//________________________________________________________________________//

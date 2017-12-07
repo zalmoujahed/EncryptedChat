@@ -22,7 +22,6 @@ public class ServerGUI extends JFrame {
 	Vector <PrintWriter> outStreamList;
 
 	Vector<Client> clients;
-	Vector<String> clientIDs;
 
 
 	// set up ServerGUI
@@ -41,8 +40,7 @@ public class ServerGUI extends JFrame {
 		// set up the shared outStreamList
 		outStreamList = new Vector<PrintWriter>();
 		clients = new Vector<Client>();
-		clientIDs = new Vector<String>();
-
+		
 		// get content pane and set its layout
 		Container container = getContentPane();
 		container.setLayout( new FlowLayout() );
@@ -82,7 +80,13 @@ public class ServerGUI extends JFrame {
 	}
 	//__________________________________________________________________________________//
 	public void updateClientList(){	
-		clientList.insert("Client " + curID + "\n", 0);			
+		
+		clientList.setText(null);
+		
+		for(Client c: clients){
+			clientList.insert("Client " + c.getID() + "\n", 0);
+		}
+					
 	}
 	//__________________________________________________________________________________//
 	void processInput(String input){
@@ -93,6 +97,8 @@ public class ServerGUI extends JFrame {
 		else if(input.charAt(0) == 'd'){
 			disconnectClient(input);
 		}
+		
+		updateClientList();
 		
 	}
 	//__________________________________________________________________________________//
@@ -107,9 +113,16 @@ public class ServerGUI extends JFrame {
 		
 		//send out disconnection message
 		//update list
-		
+		String id = s.substring(2);
 		history.insert(s, 0);
 		
+		for(Client c: clients){
+			if(c.getID().equals(id)){
+				clients.remove(c);
+				break;
+			}
+		}
+		broadcast('d', id);
 		
 	}
 	//__________________________________________________________________________________//
@@ -216,16 +229,13 @@ public class ServerGUI extends JFrame {
 
 		public CommunicationThread (Socket clientSoc)
 		{
-//			Random rand = new Random(); 
-//			int value = rand.nextInt(100); 
 			curID++;
 
 			c = new Client(clientSoc, "" + curID);
+			clients.add(c);
+			
 			updateClientList();
 			
-			
-			clients.add(c);
-
 			clientSocket = clientSoc;
 			history.insert ("Comminucating with Port" + clientSocket.getLocalPort()+"\n", 0);
 						
@@ -245,11 +255,11 @@ public class ServerGUI extends JFrame {
 				// Send an initializing message to the newly connected client
 				initializeClient(out);
 				
-
 				String inputLine;  
 
 				while ((inputLine = in.readLine()) != null) 
 				{ 
+					processInput(inputLine);
 					history.insert (inputLine+"\n", 0);
 
 					// Loop through the outStreamList and send to all "active" streams
