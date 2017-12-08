@@ -142,13 +142,14 @@ public class ClientGUI extends JFrame implements ActionListener
 		try
 		{
 			if(toID.getText().equals("")){
-				
+				//JOptionPane.showMessageDialog( this,"Must have a valid client ID in the text box", "", JOptionPane.PLAIN_MESSAGE);
 				return;
 			}
-			
-			else if(!otherClients.contains(toID)){
-				
-			}
+//			
+//			else if(!otherClients.contains(toID )){
+//				JOptionPane.showMessageDialog( this,"Must have a valid client ID in the text box", "", JOptionPane.PLAIN_MESSAGE);
+//				return;
+//			}
 			String msg = encrypt(message.getText());
 			out.println("m " + toID.getText() + " " + ID + " >>begin<< " + msg );
 			message.setText("");
