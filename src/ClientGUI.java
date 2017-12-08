@@ -1,6 +1,7 @@
 import java.net.*;
 import java.util.Vector;
-import java.io.*; 
+import java.io.*;
+import java.math.BigInteger;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -285,16 +286,80 @@ public class ClientGUI extends JFrame implements ActionListener
 		
 	}
 	//________________________________________________________________________//
-	String decrypt(String msg){
-		
+	String encrypt(String msg){
+		int j = 0, i = 0;
 		String result = msg;
+		String encryptedResult = "";
+		String[] blockArray = {};
+		char[] decArr = result.toCharArray();
+		int[] decryptArray = {};
+		int total = 0;
+		BigInteger[] BigInt = {};
+		BigInteger value;
+		BigInteger n = BigInteger.valueOf(21);
+		//Public key variable
+		int p = 3, q = 7, phi = 12;
+		BigInteger e = BigInteger.valueOf(3);
+		BigInteger[] encryptedBigInts = {};
+		char temp = 0;
 		
-		return result;
+		
+		while(result.length()%4 != 0)
+		{
+			result = result +" ";
+			System.out.println(result.length() + "\n");
+		}
+		
+		while (i < result.length())
+		{	
+			blockArray[j] = result.substring(i, i+4);
+			i = i+4;
+			j++;
+			//Debug code
+			System.out.println("Block " + j + ": " + blockArray[j] + "\n");
+		}
+		
+//		//loop through every block
+//		for(i = 0; i < blockArray.length; i++)
+//		{
+//			System.out.println(blockArray[i]);
+//			
+//			//loop through string in block
+//			for(int y = 0; y < blockArray[i].length(); y++)
+//			{
+//				decryptArray[y] = blockArray[i].charAt(y);
+//			}
+//			
+//			value = BigInteger.valueOf(decryptArray[0]*(int)Math.pow(128, 0) 
+//										+ decryptArray[1]*(int)Math.pow(128, 1)
+//										+ decryptArray[2]*(int)Math.pow(128, 2)
+//										+ decryptArray[3]*(int)Math.pow(128, 3));
+//			BigInt[i] = value;
+//		}
+//		
+//		String encryptedStr = "";
+//		
+//		for(i = 0; i < blockArray.length; i++)
+//		{
+//			encryptedBigInts[i] = BigInt[i].modPow(e, n);
+//			encryptedStr = " " + encryptedBigInts[i];
+//		}
+//		
+//		//encryptedResult = encryptedBigInts.toString();
+//		
+//		return encryptedStr;
+		return "";
 		
 	}
+	
 	//________________________________________________________________________//
-	String encrypt(String msg){
+	String decrypt(String msg){
 		String result = msg;
+		String[] encryptedMessages = result.split(" ");
+		BigInteger[] bigIntegerArr = new BigInteger[encryptedMessages.length];
+		
+		//BigInteger message = new BigInteger(result);
+		//decrypt Big
 		
 		return result;
 	}
