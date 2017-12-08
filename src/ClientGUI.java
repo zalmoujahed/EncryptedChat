@@ -1,4 +1,5 @@
 import java.net.*;
+import java.util.ArrayList;
 import java.util.Vector;
 import java.io.*;
 import java.math.BigInteger;
@@ -291,7 +292,7 @@ public class ClientGUI extends JFrame implements ActionListener
 		String result = msg;
 		String encryptedResult = "";
 		String[] blockArray = {};
-		char[] decArr = result.toCharArray();
+		//char[] decArr = result.toCharArray();
 		int[] decryptArray = {};
 		int total = 0;
 		BigInteger[] BigInt = {};
@@ -302,22 +303,33 @@ public class ClientGUI extends JFrame implements ActionListener
 		BigInteger e = BigInteger.valueOf(3);
 		BigInteger[] encryptedBigInts = {};
 		char temp = 0;
-		
+		char[] tempArr;
+		ArrayList< ArrayList<Character> > blocks = null;
+		ArrayList<Character> individualBlock = null;
 		
 		while(result.length()%4 != 0)
 		{
 			result = result +" ";
-			System.out.println(result.length() + "\n");
+			//System.out.println(result.length() + "\n");
 		}
+//		
+//		tempArr = result.toCharArray();
+//		
+//		while( i < tempArr.length)
+//		{
+//			//individualBlock.add(tempArr[i]);
+//			blocks[j].add(tempArr[i]);
+//			if(i%3)
+//		}
 		
-		while (i < result.length())
-		{	
-			blockArray[j] = result.substring(i, i+4);
-			i = i+4;
-			j++;
-			//Debug code
-			System.out.println("Block " + j + ": " + blockArray[j] + "\n");
-		}
+//		while (i <= result.length())
+//		{	
+//			//blockArray[j] = result.substring(i, i+3);
+//			i = i+3;
+//			j++;
+//			//Debug code
+//			System.out.println("Block " + j + ": " + blockArray[j] + "\n");
+//		}
 		
 //		//loop through every block
 //		for(i = 0; i < blockArray.length; i++)
@@ -348,8 +360,9 @@ public class ClientGUI extends JFrame implements ActionListener
 //		//encryptedResult = encryptedBigInts.toString();
 //		
 //		return encryptedStr;
-		return "";
-		
+//		return " ";
+//		return result;
+		return msg;
 	}
 	
 	//________________________________________________________________________//
