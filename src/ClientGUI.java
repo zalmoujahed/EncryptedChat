@@ -1,8 +1,8 @@
 import java.net.*;
 import java.util.ArrayList;
-import java.util.Vector;
+import java.util.*;
+import java.math.*;
 import java.io.*;
-import java.math.BigInteger;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -31,8 +31,21 @@ public class ClientGUI extends JFrame implements ActionListener
 	private BufferedReader in;
 
 	//Client info
-	String ID = "";
-	Vector<String> otherClients;
+	private String ID = "";
+	private BigInteger privateKey; 
+	private Vector<String> otherClients;
+	
+	private int BLOCKING_SIZE = 4;
+	private int P = 16411;
+	private int Q = 16417;
+	private int PHI;
+	private int N;
+	private int E;
+	private int D;
+	private BigInteger M;
+	private BigInteger C;
+	
+	
 
 
 	// set up GUI
@@ -144,7 +157,7 @@ public class ClientGUI extends JFrame implements ActionListener
 		try
 		{
 			if(toID.getText().equals("")){
-				//JOptionPane.showMessageDialog( this,"Must have a valid client ID in the text box", "", JOptionPane.PLAIN_MESSAGE);
+				JOptionPane.showMessageDialog( this,"Must have a valid client ID in the text box", "", JOptionPane.PLAIN_MESSAGE);
 				return;
 			}
 //			
@@ -152,7 +165,7 @@ public class ClientGUI extends JFrame implements ActionListener
 //				JOptionPane.showMessageDialog( this,"Must have a valid client ID in the text box", "", JOptionPane.PLAIN_MESSAGE);
 //				return;
 //			}
-			String msg = encrypt(message.getText());
+			String msg = encryptMessage(message.getText());
 			out.println("m " + toID.getText() + " " + ID + " >>begin<< " + msg );
 			message.setText("");
 		}
@@ -288,12 +301,68 @@ public class ClientGUI extends JFrame implements ActionListener
 		
 	}
 	//________________________________________________________________________//
+	String encryptMessage(String msg){
+		
+		String result = "";
+		
+		
+		
+		
+		
+		
+		return result;
+	}
+	//________________________________________________________________________//
+	void setN(){
+		
+		N = P*Q;
+		
+	}
+	//________________________________________________________________________//
+	void setE(){
+		
+		
+		
+	}
+	//________________________________________________________________________//
+	void setP(){
+		
+	}	
+	//________________________________________________________________________//
+	void setQ(){
+		
+	}	
+	//________________________________________________________________________//
+	void setD(){
+		
+		boolean works = false;
+		int k = 0;
+		
+		while(!works){
+			D = (1 + k * PHI) / E;
+			if((E*D) % PHI == 1){
+				return;
+			}
+			
+			k++;
+		}
+			
+	}
+	//________________________________________________________________________//
+	void setPhi(){
+		
+		PHI = (P-1)*(Q-1);
+		
+	}
+	//________________________________________________________________________//
+	//________________________________________________________________________//
+	/*
 	String encrypt(String msg){
 		int j = 0, i = 0;
 		String result = msg;
 		String encryptedResult = "";
 		String[] blockArray = {};
-		//char[] decArr = result.toCharArray();
+		char[] decArr = result.toCharArray();
 		int[] decryptArray = {};
 		int total = 0;
 		BigInteger[] BigInt = {};
@@ -313,59 +382,59 @@ public class ClientGUI extends JFrame implements ActionListener
 			result = result +" ";
 			//System.out.println(result.length() + "\n");
 		}
-//		
-//		tempArr = result.toCharArray();
-//		
-//		while( i < tempArr.length)
-//		{
-//			//individualBlock.add(tempArr[i]);
-//			blocks[j].add(tempArr[i]);
-//			if(i%3)
-//		}
 		
-//		while (i <= result.length())
-//		{	
-//			//blockArray[j] = result.substring(i, i+3);
-//			i = i+3;
-//			j++;
-//			//Debug code
-//			System.out.println("Block " + j + ": " + blockArray[j] + "\n");
-//		}
+		tempArr = result.toCharArray();
 		
-//		//loop through every block
-//		for(i = 0; i < blockArray.length; i++)
-//		{
-//			System.out.println(blockArray[i]);
-//			
-//			//loop through string in block
-//			for(int y = 0; y < blockArray[i].length(); y++)
-//			{
-//				decryptArray[y] = blockArray[i].charAt(y);
-//			}
-//			
-//			value = BigInteger.valueOf(decryptArray[0]*(int)Math.pow(128, 0) 
-//										+ decryptArray[1]*(int)Math.pow(128, 1)
-//										+ decryptArray[2]*(int)Math.pow(128, 2)
-//										+ decryptArray[3]*(int)Math.pow(128, 3));
-//			BigInt[i] = value;
-//		}
-//		
-//		String encryptedStr = "";
-//		
-//		for(i = 0; i < blockArray.length; i++)
-//		{
-//			encryptedBigInts[i] = BigInt[i].modPow(e, n);
-//			encryptedStr = " " + encryptedBigInts[i];
-//		}
-//		
-//		//encryptedResult = encryptedBigInts.toString();
+		while( i < tempArr.length)
+		{
+			//individualBlock.add(tempArr[i]);
+			blocks[j].add(tempArr[i]);
+			if(i%3)
+		}
+		
+		while (i <= result.length())
+		{	
+			//blockArray[j] = result.substring(i, i+3);
+			i = i+3;
+			j++;
+			//Debug code
+			System.out.println("Block " + j + ": " + blockArray[j] + "\n");
+		}
+		
+		//loop through every block
+		for(i = 0; i < blockArray.length; i++)
+		{
+			System.out.println(blockArray[i]);
+			
+			//loop through string in block
+			for(int y = 0; y < blockArray[i].length(); y++)
+			{
+				decryptArray[y] = blockArray[i].charAt(y);
+			}
+			
+			value = BigInteger.valueOf(decryptArray[0]*(int)Math.pow(128, 0) 
+										+ decryptArray[1]*(int)Math.pow(128, 1)
+										+ decryptArray[2]*(int)Math.pow(128, 2)
+										+ decryptArray[3]*(int)Math.pow(128, 3));
+			BigInt[i] = value;
+		}
+		
+		String encryptedStr = "";
+		
+		for(i = 0; i < blockArray.length; i++)
+		{
+			encryptedBigInts[i] = BigInt[i].modPow(e, n);
+			encryptedStr = " " + encryptedBigInts[i];
+		}
+		
+		//encryptedResult = encryptedBigInts.toString();
 //		
 //		return encryptedStr;
 //		return " ";
 //		return result;
 		return msg;
 	}
-	
+	*/
 	//________________________________________________________________________//
 	String decrypt(String msg){
 		String result = msg;
