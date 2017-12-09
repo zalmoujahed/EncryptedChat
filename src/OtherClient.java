@@ -1,13 +1,13 @@
 import java.math.BigInteger;
 
-public class Pair {
+public class OtherClient {
 	
 	int ID;
 	BigInteger E; 
 	BigInteger N;
 	
 	
-	public Pair(String id, String e, String n){
+	public OtherClient(String id, String e, String n){
 		
 		ID = Integer.parseInt(id);
 		E = new BigInteger(e);
