@@ -35,6 +35,7 @@ public class ClientGUI extends JFrame implements ActionListener
 	private BigInteger privateKey; 
 	private Vector<String> otherClients;
 	
+	private ArrayList<Integer> prime = new ArrayList<Integer>();
 	private int BLOCKING_SIZE = 4;
 	private int P = 16411;
 	private int Q = 16417;
@@ -50,9 +51,19 @@ public class ClientGUI extends JFrame implements ActionListener
 
 	// set up GUI
 	public ClientGUI()
-	{
+	{	
 		super( "Client" );
 
+		try {
+			setUpPrimeList();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		otherClients = new Vector<String>();
 
 		// get content pane and set its layout
@@ -303,12 +314,7 @@ public class ClientGUI extends JFrame implements ActionListener
 	//________________________________________________________________________//
 	String encryptMessage(String msg){
 		
-		String result = "";
-		
-		
-		
-		
-		
+		String result = "";		
 		
 		return result;
 	}
@@ -321,16 +327,48 @@ public class ClientGUI extends JFrame implements ActionListener
 	//________________________________________________________________________//
 	void setE(){
 		
-		
-		
 	}
 	//________________________________________________________________________//
-	void setP(){
+	void setUpPrimeList() throws NumberFormatException, IOException
+	{	
+		FileReader file = new FileReader("prime.txt");
+		BufferedReader read = new BufferedReader(file);
+		String line;
 		
+		while((line = read.readLine()) != null)
+		{
+			prime.add(Integer.parseInt(line));
+		}
+		for(int i = 0; i < prime.size(); i++)
+		{
+			System.out.println("Prime at: " + prime.get(i));
+		}
+	}
+	//________________________________________________________________________//
+	void setP() throws FileNotFoundException{	
+		if(pText.getText() != "" || pText.getText() != null || !(pText.equals("")))
+		{
+			P = Integer.parseInt(pText.getText());
+		}
+		else
+		{
+			Collections.shuffle(prime);
+			P = prime.get(0);
+			prime.remove(0);
+		}
 	}	
 	//________________________________________________________________________//
 	void setQ(){
-		
+		if(qText.getText() != "" || qText.getText() != null || !(qText.equals("")))
+		{
+			Q = Integer.parseInt(qText.getText());
+		}
+		else
+		{
+			Collections.shuffle(prime);
+			Q = prime.get(0);
+			prime.remove(0);
+		}
 	}	
 	//________________________________________________________________________//
 	void setD(){
