@@ -15,19 +15,33 @@ public class OtherClient {
 		
 	}
 	
-	public void getE()
+	public void setE(String e)
 	{
-		
+		E = new BigInteger(e);
 	}
 	
-	public void getN()
+	public void setN(String n)
 	{
-		
+		N = new BigInteger(n);
 	}
 	
-	public void getID()
+	public void setID(String id)
 	{
-		
+		ID = Integer.parseInt(id);
 	}
 
+	public BigInteger getE()
+	{
+		return E;
+	}
+	
+	public BigInteger getN()
+	{
+		return N;
+	}
+	
+	public int getID()
+	{
+		return ID;
+	}
 }
