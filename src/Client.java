@@ -6,6 +6,8 @@ import java.io.*;
 public class Client {
 
 	private String clientID;
+	private String e;
+	private String n;
 	private Socket clientSocket = null;
 	private PrintWriter output = null;
 

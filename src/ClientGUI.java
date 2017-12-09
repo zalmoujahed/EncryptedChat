@@ -177,7 +177,7 @@ public class ClientGUI extends JFrame implements ActionListener
 //				return;
 //			}
 			String msg = encryptMessage(message.getText());
-			out.println("m " + toID.getText() + " " + ID + " >>begin<< " + msg );
+			out.println("m " + toID.getText() + " " + ID + " >>begin<<" + msg );
 			message.setText("");
 		}
 		catch (Exception e) 
@@ -275,7 +275,7 @@ public class ClientGUI extends JFrame implements ActionListener
 			
 			int index = input.indexOf(">>begin<<");		//size 9
 			
-			String in = input.substring(index+9);
+			String in = input.substring(index+10);
 			
 			String msg = decrypt(in);
 			history.append("Client " + fromID + ": " + msg + "\n");
@@ -324,6 +324,7 @@ public class ClientGUI extends JFrame implements ActionListener
 		setQ();
 		setN();
 		setPhi();
+		
 		setE();
 		
 		char [] temp = msg.toCharArray();
@@ -355,7 +356,6 @@ public class ClientGUI extends JFrame implements ActionListener
 			result = result + " " + value;
 			
 		}
-	
 				
 		return result;
 
@@ -464,12 +464,40 @@ public class ClientGUI extends JFrame implements ActionListener
 
 	//________________________________________________________________________//
 	String decrypt(String msg){
-		String result = msg;
-		String[] encryptedMessages = result.split(" ");
-		BigInteger[] bigIntegerArr = new BigInteger[encryptedMessages.length];
 		
-		//BigInteger message = new BigInteger(result);
-		//decrypt Big
+		setD();
+		String result = "";
+		
+		String [] temp = msg.split(" ");
+		ArrayList<String> splitMsg = new ArrayList<String>();
+		
+		for(String s: temp){
+			System.out.println(s);
+			splitMsg.add(s);
+		}
+
+		for(String s: splitMsg){
+			System.out.println(s);
+			BigInteger value = new BigInteger(s);
+			value = value.modPow(D, N);
+
+			ArrayList<BigInteger> tempArr = new ArrayList<BigInteger>();
+			for(int i  = 3; i >= 0; i--){
+
+				tempArr.add(0, value.mod(BigInteger.valueOf(128).pow(i)));
+
+			}
+			int j = 0;
+			for(BigInteger i: tempArr){
+				
+				String finalChar = i.divide(BigInteger.valueOf(128).pow(j)).toString();
+				result = result + finalChar;
+				
+				j++;
+			}
+			
+			
+		}
 		
 		return result;
 	}
