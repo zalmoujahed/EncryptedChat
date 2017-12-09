@@ -469,6 +469,7 @@ public class ClientGUI extends JFrame implements ActionListener
 		String result = "";
 		
 		String [] temp = msg.split(" ");
+		BigInteger tempBig;
 		ArrayList<String> splitMsg = new ArrayList<String>();
 		
 		for(String s: temp){
@@ -479,19 +480,22 @@ public class ClientGUI extends JFrame implements ActionListener
 		for(String s: splitMsg){
 			System.out.println(s);
 			BigInteger value = new BigInteger(s);
-			value = value.modPow(D, N);
+			tempBig = value.modPow(D, N);	//decrypted value
 
 			ArrayList<BigInteger> tempArr = new ArrayList<BigInteger>();
 			for(int i  = 3; i >= 0; i--){
 
-				tempArr.add(0, value.mod(BigInteger.valueOf(128).pow(i)));
-
+				tempArr.add(0, tempBig.mod(BigInteger.valueOf(128).pow(i)));
 			}
 			int j = 0;
 			for(BigInteger i: tempArr){
 				
-				String finalChar = i.divide(BigInteger.valueOf(128).pow(j)).toString();
-				result = result + finalChar;
+				String finalChar = i.divide(BigInteger.valueOf(128)).toString();//.pow(j)).toString();
+				char finChar = finalChar.charAt(0);
+				int ascii = finChar;
+				ascii  = ascii << 7;
+				//finChar = (char) ascii;
+				result = result + (char) ascii;
 				
 				j++;
 			}
