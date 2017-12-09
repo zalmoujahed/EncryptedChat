@@ -6,8 +6,8 @@ import java.io.*;
 public class Client {
 
 	private String clientID;
-	private String e;
-	private String n;
+	private String E;
+	private String N;
 	private Socket clientSocket = null;
 	private PrintWriter output = null;
 
@@ -32,6 +32,13 @@ public class Client {
 	{
 		output.println(data);
 		System.out.println("Server sent: " + data );
+	}
+	
+	public void setKey(String e, String n){
+		
+		E = e;
+		N = n;
+		
 	}
 
 }

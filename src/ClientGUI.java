@@ -33,7 +33,7 @@ public class ClientGUI extends JFrame implements ActionListener
 	//Client info
 	private String ID = "";
 	private BigInteger privateKey; 
-	private Vector<String> otherClients;
+	private Vector<OtherClient> otherClients;
 	
 	private ArrayList<Integer> prime = new ArrayList<Integer>();
 	private int BLOCKING_SIZE = 4;
@@ -176,6 +176,7 @@ public class ClientGUI extends JFrame implements ActionListener
 //				JOptionPane.showMessageDialog( this,"Must have a valid client ID in the text box", "", JOptionPane.PLAIN_MESSAGE);
 //				return;
 //			}
+			
 			String msg = encryptMessage(message.getText());
 			out.println("m " + toID.getText() + " " + ID + " >>begin<<" + msg );
 			message.setText("");
@@ -256,6 +257,7 @@ public class ClientGUI extends JFrame implements ActionListener
 		if(input.startsWith("ic")){			//initialize client
 			ID = input.substring(3);
 			IDLabel.setText("Your client ID: " + ID);
+			sendKey
 		}
 		else if(input.startsWith("io")){	//initialize otherClients
 			initializeClientList(input);
@@ -280,6 +282,14 @@ public class ClientGUI extends JFrame implements ActionListener
 			String msg = decrypt(in);
 			history.append("Client " + fromID + ": " + msg + "\n");
 		}
+		else if(input.startsWith("key")){
+			String [] in = input.split(" ");
+			
+			for(OtherClient o : otherClients){
+				if(o.getID().
+			}
+			
+		}
 		
 		updateClientList();
 		
@@ -295,6 +305,7 @@ public class ClientGUI extends JFrame implements ActionListener
 			}
 			i++;
 		}
+		getkey and save
 	}
 	//________________________________________________________________________//
 	void addNewlyConnected(String input){

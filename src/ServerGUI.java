@@ -97,6 +97,17 @@ public class ServerGUI extends JFrame {
 		else if(input.charAt(0) == 'd'){
 			disconnectClient(input);
 		}
+		else if(input.startsWith("key")){
+			String [] in = input.split(" ");
+			for(Client c : clients){
+				if(c.getID().equals(in[1])){
+					c.setKey(in[2], in[3]);
+					break;
+				}
+			}
+			
+			broadcast("key", input);
+		}
 		
 		updateClientList();
 		
@@ -134,15 +145,23 @@ public class ServerGUI extends JFrame {
 				break;
 			}
 		}
-		broadcast('d', id);
+		broadcast("d", id);
 		
 	}
 	//__________________________________________________________________________________//
-	void broadcast(char type, String id){
+	void broadcast(String type, String id){
 		
 		for(Client c: clients){
-			if(!c.getID().equals(id))
-				c.sendMessage(type + " "+ id);
+			if(!c.getID().equals(id)){
+				if(type.equals("key")){
+					c.sendMessage(id);
+				}
+				else
+					c.sendMessage(type + " "+ id);
+			}
+				
+				
+				
 		}
 		
 	}
@@ -163,7 +182,7 @@ public class ServerGUI extends JFrame {
 		
 		output.println("io" + others + " >>end<<");
 		
-		broadcast('c', "" + curID);
+		broadcast("c", "" + curID);
 	}
 	
 	//__________________________________________________________________________________//
@@ -244,6 +263,7 @@ public class ServerGUI extends JFrame {
 			curID++;
 
 			c = new Client(clientSoc, "" + curID);
+			
 			clients.add(c);
 			
 			updateClientList();
@@ -262,7 +282,6 @@ public class ServerGUI extends JFrame {
 				BufferedReader in = new BufferedReader( new InputStreamReader( clientSocket.getInputStream())); 
 				
 				c.setOutputStream(out);
-				outStreamList.add(out);
 				
 				// Send an initializing message to the newly connected client
 				initializeClient(out);

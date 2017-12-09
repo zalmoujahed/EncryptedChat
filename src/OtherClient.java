@@ -25,7 +25,7 @@ public class OtherClient {
 		
 	}
 	
-	public void getID()
+	public String getID()
 	{
 		
 	}
