@@ -44,7 +44,11 @@ public class Menu extends JMenuBar{
 		
 		connectionItem.addActionListener( new ActionListener() {
 	    	public void actionPerformed( ActionEvent event ){
-	    		JOptionPane.showMessageDialog( gui,"Fill this in "
+	    		JOptionPane.showMessageDialog( gui,"When running the program, make sure to " +
+	    					"click on the server button and start listening. \nClick the client button" +
+	    					" if you want to open up a chat box. \nYou must input the ip address and " +
+	    					"the port for the client to connect. \nTo send a message when connected, \nyou" +
+	    					" must input the client's id that you would like to connect to."
 		                , "Connection Help", JOptionPane.PLAIN_MESSAGE);
 
 	        }
