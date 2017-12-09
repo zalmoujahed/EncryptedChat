@@ -64,7 +64,7 @@ public class ClientGUI extends JFrame implements ActionListener
 			e.printStackTrace();
 		}
 		
-		otherClients = new Vector<String>();
+		otherClients = new Vector<OtherClient>();
 
 		// get content pane and set its layout
 		Container container = getContentPane();
@@ -257,7 +257,13 @@ public class ClientGUI extends JFrame implements ActionListener
 		if(input.startsWith("ic")){			//initialize client
 			ID = input.substring(3);
 			IDLabel.setText("Your client ID: " + ID);
-			sendKey
+			out.println("key " + ID + " " + E + " " + N );
+			setP();
+			setQ();
+			setN();
+			setPhi();
+			setE();
+			setD();
 		}
 		else if(input.startsWith("io")){	//initialize otherClients
 			initializeClientList(input);
@@ -280,13 +286,17 @@ public class ClientGUI extends JFrame implements ActionListener
 			String in = input.substring(index+10);
 			
 			String msg = decrypt(in);
-			history.append("Client " + fromID + ": " + msg + "\n");
+			history.append("Client " + fromID + " sent: " + msg + "\n");
 		}
 		else if(input.startsWith("key")){
 			String [] in = input.split(" ");
 			
 			for(OtherClient o : otherClients){
-				if(o.getID().
+				if(o.getID().equals(in[1])){
+					o.setE(in[2]);
+					o.setN(in[2]);
+					break;
+				}
 			}
 			
 		}
@@ -299,20 +309,20 @@ public class ClientGUI extends JFrame implements ActionListener
 		
 		String[] otherIDs = input.split(" ");
 		int i = 1;
-		while(!otherIDs[i].equals(">>end<<")){
+		while(i < otherIDs.length && !otherIDs[i].equals(">>end<<")){
 			if(!otherIDs[i].equals(ID)){
-				otherClients.add(otherIDs[i]);
+				OtherClient c = new OtherClient(otherIDs[i], otherIDs[i+1], otherIDs[i+2]);
+				otherClients.add(c);
 			}
-			i++;
+			i = i+3;
 		}
-		getkey and save
 	}
 	//________________________________________________________________________//
 	void addNewlyConnected(String input){
-		
-		String id = input.substring(2);
+		String [] in = input.split(" ");
+		String id = in[1];
 		history.insert("Client " + id + " connected to the server\n", 0);
-		otherClients.add(id);
+		otherClients.add(new OtherClient(id, in[2], in[3]));
 		
 	}
 	//________________________________________________________________________//
@@ -330,14 +340,7 @@ public class ClientGUI extends JFrame implements ActionListener
 		ArrayList<Character> block = new ArrayList<Character>();
 		BigInteger value;
 		
-		//set up all values
-		setP();
-		setQ();
-		setN();
-		setPhi();
-		
-		setE();
-		
+		//set up all values	
 		char [] temp = msg.toCharArray();
 		for(char c: temp){
 			splitMsg.add(c);
@@ -355,15 +358,15 @@ public class ClientGUI extends JFrame implements ActionListener
 			for(int i = 0; i < BLOCKING_SIZE; i++){
 				block.add(splitMsg.remove(0));
 			}
-			
-			value = BigInteger.valueOf(block.get(0)*(int)Math.pow(128, 0) 
-					+ block.get(1)*(int)Math.pow(128, 1)
-					+ block.get(2)*(int)Math.pow(128, 2)
-					+ block.get(3)*(int)Math.pow(128, 3));
+			System.out.println(block);
+			value = BigInteger.valueOf(block.get(0)*(int)Math.pow(128, 0));
+			value = value.add(BigInteger.valueOf(block.get(1)*(int)Math.pow(128, 1)));
+			value = value.add(BigInteger.valueOf(block.get(2)*(int)Math.pow(128, 2)));
+			value = value.add(BigInteger.valueOf(block.get(3)*(int)Math.pow(128, 3)));
 			
 			
 			value = value.modPow(E, N);
-			
+						
 			result = result + " " + value;
 			
 		}
@@ -480,37 +483,35 @@ public class ClientGUI extends JFrame implements ActionListener
 		String result = "";
 		
 		String [] temp = msg.split(" ");
-		BigInteger tempBig;
-		ArrayList<String> splitMsg = new ArrayList<String>();
+		ArrayList<BigInteger> splitMsg = new ArrayList<BigInteger>();
 		
 		for(String s: temp){
 			System.out.println(s);
-			splitMsg.add(s);
+			splitMsg.add(new BigInteger(s));
 		}
 
-		for(String s: splitMsg){
-			System.out.println(s);
-			BigInteger value = new BigInteger(s);
-			tempBig = value.modPow(D, N);	//decrypted value
-
-			ArrayList<BigInteger> tempArr = new ArrayList<BigInteger>();
-			for(int i  = 3; i >= 0; i--){
-
-				tempArr.add(0, tempBig.mod(BigInteger.valueOf(128).pow(i)));
-			}
-			int j = 0;
-			for(BigInteger i: tempArr){
-				
-				String finalChar = i.divide(BigInteger.valueOf(128)).toString();//.pow(j)).toString();
-				char finChar = finalChar.charAt(0);
-				int ascii = finChar;
-				ascii  = ascii << 7;
-				//finChar = (char) ascii;
-				result = result + (char) ascii;
-				
-				j++;
-			}
+		for(BigInteger C: splitMsg){
 			
+			C = C.modPow(D, N);
+			System.out.println(C);
+			
+			while(true){
+				if(C.intValue() == 0)
+				{
+					break;
+				}
+				
+				int value = C.mod(BigInteger.valueOf(128)).intValue();
+				
+				char c = (char)value;
+				
+				C = C.shiftRight(7);
+				if(c != 0){
+					result = result + c;
+				}
+				
+				
+			}
 			
 		}
 		
@@ -521,8 +522,8 @@ public class ClientGUI extends JFrame implements ActionListener
 
 		clientList.setText(null);
 		
-		for(String s: otherClients){
-			clientList.append("Client " + s + "\n");
+		for(OtherClient o: otherClients){
+			clientList.append("Client " + o.getID() + "\n");
 		}
 		
 	}

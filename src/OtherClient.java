@@ -25,27 +25,23 @@ public class OtherClient {
 		N = new BigInteger(n);
 	}
 	
-<<<<<<< HEAD
-	public String getID()
-=======
 	public void setID(String id)
->>>>>>> 380abbbbabf73a3d436780005d2176e404e9f8e6
 	{
 		ID = Integer.parseInt(id);
 	}
 
-	public BigInteger getE()
+	public String getE()
 	{
-		return E;
+		return E.toString();
 	}
 	
-	public BigInteger getN()
+	public String getN()
 	{
-		return N;
+		return N.toString();
 	}
 	
-	public int getID()
+	public String getID()
 	{
-		return ID;
+		return Integer.toString(ID);
 	}
 }

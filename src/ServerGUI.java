@@ -179,6 +179,7 @@ public class ServerGUI extends JFrame {
 				others += " " + c.getID();
 			}
 		}
+		//fix this
 		
 		output.println("io" + others + " >>end<<");
 		
