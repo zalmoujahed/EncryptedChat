@@ -37,8 +37,8 @@ public class ClientGUI extends JFrame implements ActionListener
 	
 	private ArrayList<Integer> prime = new ArrayList<Integer>();
 	private int BLOCKING_SIZE = 4;
-	private int P = 16411;
-	private int Q = 16417;
+	private int P = 13;
+	private int Q = 19;
 	private BigInteger PHI;
 	private BigInteger N;
 	private BigInteger E;
@@ -313,12 +313,7 @@ public class ClientGUI extends JFrame implements ActionListener
 	}
 	//________________________________________________________________________//
 	String encryptMessage(String msg){
-		
-<<<<<<< HEAD
-		String result = "";		
-		
-		return result;
-=======
+
 		String result = "";
 		ArrayList<Character> splitMsg = new ArrayList<Character>();
 		ArrayList<Character> block = new ArrayList<Character>();
@@ -336,34 +331,34 @@ public class ClientGUI extends JFrame implements ActionListener
 			splitMsg.add(c);
 		}
 		
-//		char nulChar = 0;
-//		// Add padding if too small 
-//		while(splitMsg.size() % BLOCKING_SIZE != 0){
-//			splitMsg.add(nulChar);
-//		}
-//		
-//		while(!splitMsg.isEmpty()){
-//			
-//			block.removeAll(block);
-//			for(int i = 0; i < BLOCKING_SIZE; i++){
-//				block.add(splitMsg.remove(0));
-//			}
-//			
-//			value = BigInteger.valueOf(block.get(0)*(int)Math.pow(128, 0) 
-//					+ block.get(1)*(int)Math.pow(128, 1)
-//					+ block.get(2)*(int)Math.pow(128, 2)
-//					+ block.get(3)*(int)Math.pow(128, 3));
-//			
-//			
-//			value = value.modPow(E, N);
-//			
-//			result = result + " " + value;
-//			
-//		}
+		char nulChar = 0;
+		// Add padding if too small 
+		while(splitMsg.size() % BLOCKING_SIZE != 0){
+			splitMsg.add(nulChar);
+		}
+		
+		while(!splitMsg.isEmpty()){
+			
+			block.removeAll(block);
+			for(int i = 0; i < BLOCKING_SIZE; i++){
+				block.add(splitMsg.remove(0));
+			}
+			
+			value = BigInteger.valueOf(block.get(0)*(int)Math.pow(128, 0) 
+					+ block.get(1)*(int)Math.pow(128, 1)
+					+ block.get(2)*(int)Math.pow(128, 2)
+					+ block.get(3)*(int)Math.pow(128, 3));
+			
+			
+			value = value.modPow(E, N);
+			
+			result = result + " " + value;
+			
+		}
 	
 				
-		return msg;
->>>>>>> c0b56ceeff735b7515f257f360aac05ccec743df
+		return result;
+
 	}
 	//________________________________________________________________________//
 	void setN(){
@@ -372,9 +367,7 @@ public class ClientGUI extends JFrame implements ActionListener
 	}
 	//________________________________________________________________________//
 	void setE(){
-<<<<<<< HEAD
-		
-=======
+
 		E = BigInteger.valueOf(2);
 
 		while (E.compareTo(PHI) == -1)
@@ -382,10 +375,9 @@ public class ClientGUI extends JFrame implements ActionListener
 			if (gcd(E.intValue(), PHI.intValue())==1)
 				break;
 			else
-				E.add(BigInteger.ONE);
+				E = E.add(BigInteger.valueOf(1));
 		}
 
->>>>>>> c0b56ceeff735b7515f257f360aac05ccec743df
 	}
 	//________________________________________________________________________//
 	void setUpPrimeList() throws NumberFormatException, IOException
@@ -404,29 +396,31 @@ public class ClientGUI extends JFrame implements ActionListener
 		}
 	}
 	//________________________________________________________________________//
-	void setP() throws FileNotFoundException{	
-		if(pText.getText() != "" || pText.getText() != null || !(pText.equals("")))
-		{
-			P = Integer.parseInt(pText.getText());
-		}
-		else
+	void setP() {	
+		if(pText.getText() != "" || pText.getText() != null || (pText.equals("")))
 		{
 			Collections.shuffle(prime);
 			P = prime.get(0);
-			prime.remove(0);
+			
+		}
+		else
+		{
+			P = Integer.parseInt(pText.getText());	
 		}
 	}	
 	//________________________________________________________________________//
 	void setQ(){
 		if(qText.getText() != "" || qText.getText() != null || !(qText.equals("")))
 		{
-			Q = Integer.parseInt(qText.getText());
-		}
-		else
-		{
 			Collections.shuffle(prime);
 			Q = prime.get(0);
-			prime.remove(0);
+			if(Q == P)
+				Q = prime.get(1);
+			
+		}
+		else
+		{			
+			Q = Integer.parseInt(qText.getText());
 		}
 	}	
 	//________________________________________________________________________//
