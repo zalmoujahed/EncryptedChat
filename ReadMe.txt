@@ -16,11 +16,13 @@ The button will cause the server window to display an IP Address and a port numb
 Furthermore, the server window holds two text boxes where the left one will print out the messages the clients send to one another and the right one being the text box that displays all the clients connected to the server.
 
 - Client Window
-After being prompted for the two prime numbers p and q that are greater than 16411 needed for the encryption, the user will be faced with a window that has text entries for the "Server Address", the "Server Port", the "Message" and the "Client ID". There are also two buttons that connects to the server and that sends the message to the client desired.
+The user will be faced with a window that has text entries for the "Server Address", the "Server Port", the "Message" and the "Client ID". There are also two buttons that connects to the server and that sends the message to the client desired.
 
 "Server Address" can be the default number if the client and server are on the same local machine. 
 If not, then change the address to the value provided by the server. 
 "Server Port" has to be the value provided in the server.
 "Message" type in the message that you would like to send to a specified client. 
 "Client ID" The ID starts from 10001 and each new client made after will have previous CLIENT ID plus 1;
+
+Once data is inputted, the user should click the "Connect to Server" button. The user will be followed with two prompts to input a prime number greater than 16410. Afterwards, the user can send a message to the client of their choice!
 
