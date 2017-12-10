@@ -48,7 +48,8 @@ public class Menu extends JMenuBar{
 	    					"click on the server button and start listening. \nClick the client button" +
 	    					" if you want to open up a chat box. \nYou must input the ip address and " +
 	    					"the port for the client to connect. \nTo send a message when connected, \nyou" +
-	    					" must input the client's id that you would like to connect to."
+	    					" must input the client's id that you would like to connect to. \n "
+	    					+ "To close the chat window, you must disconnect first."
 		                , "Connection Help", JOptionPane.PLAIN_MESSAGE);
 
 	        }
