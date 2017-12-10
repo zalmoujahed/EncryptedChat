@@ -20,9 +20,6 @@ public class ClientGUI extends JFrame implements ActionListener
 	private JTextArea clientList;
 	private JPanel panel;
 	private JLabel IDLabel;
-	private JTextField pText;
-	private JTextField qText;
-	
 	
 	// Network Items
 	private boolean connected;
@@ -37,8 +34,8 @@ public class ClientGUI extends JFrame implements ActionListener
 	
 	private ArrayList<Integer> prime = new ArrayList<Integer>();
 	private int BLOCKING_SIZE = 4;
-	private int P = 13;
-	private int Q = 19;
+	private int P;
+	private int Q;
 	private BigInteger PHI;
 	private BigInteger N;
 	private BigInteger E;
@@ -102,7 +99,7 @@ public class ClientGUI extends JFrame implements ActionListener
 
 
 		// Set up lower panel
-		JPanel lowerPanel = new JPanel(new GridLayout(4, 2));
+		JPanel lowerPanel = new JPanel(new GridLayout(3, 2));
 		container.add (lowerPanel, BorderLayout.SOUTH);
 
 		lowerPanel.add ( new JLabel ("Message: ", JLabel.RIGHT) );
@@ -115,19 +112,6 @@ public class ClientGUI extends JFrame implements ActionListener
 		toID.addActionListener( this );
 		lowerPanel.add( toID );
 
-		
-		pText = new JTextField ("");
-		JPanel p = new JPanel(new GridLayout(1,2));
-		p.add(new JLabel("P Value:"));
-		p.add(pText);
-		
-		qText = new JTextField ("");
-		JPanel q = new JPanel(new GridLayout(1,2));
-		q.add(new JLabel("Q Value:"));
-		q.add(qText);
-		
-		lowerPanel.add(p);
-		lowerPanel.add(q);
 		
 		sendButton = new JButton( "Send Message" );
 		sendButton.addActionListener( this );
@@ -171,13 +155,24 @@ public class ClientGUI extends JFrame implements ActionListener
 				JOptionPane.showMessageDialog( this,"Must have a valid client ID in the text box", "", JOptionPane.PLAIN_MESSAGE);
 				return;
 			}
-	
-//			else if(!otherClients.contains(toID )){
-//				JOptionPane.showMessageDialog( this,"Must have a valid client ID in the text box", "", JOptionPane.PLAIN_MESSAGE);
-//				return;
-//			}
 			
-			String msg = encryptMessage(message.getText());
+			boolean exists = false;
+			OtherClient client = null;
+			
+			for(OtherClient c: otherClients){
+				if(c.getID().equals(toID.getText())){
+					client = c;
+					exists = true;
+					break;
+				}
+			}
+			
+			if(!exists){
+				JOptionPane.showMessageDialog( this,"Client ID must exist in the client list", "", JOptionPane.PLAIN_MESSAGE);
+				return;
+			}
+			
+			String msg = encryptMessage(message.getText(), client);
 			out.println("m " + toID.getText() + " " + ID + " >>begin<<" + msg );
 			message.setText("");
 		}
@@ -195,6 +190,10 @@ public class ClientGUI extends JFrame implements ActionListener
 			String machineName = null;
 			int portNum = -1;
 			try {
+				
+				setP();
+				setQ();
+				
 				machineName = machineInfo.getText();
 				portNum = Integer.parseInt(portInfo.getText());
 				echoSocket = new Socket(machineName, portNum );
@@ -204,16 +203,20 @@ public class ClientGUI extends JFrame implements ActionListener
 
 				// start a new thread to read from the socket
 				new CommunicationReadThread ();
-
+				this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 				sendButton.setEnabled(true);
 				connected = true;
 				history.setText(null);
 				connectButton.setText("Disconnect from Server");
-			} catch (NumberFormatException e) {
+				
+			} 
+			catch (NumberFormatException e) {
 				history.insert ( "Server Port must be an integer\n", 0);
-			} catch (UnknownHostException e) {
+			} 
+			catch (UnknownHostException e) {
 				history.insert("Don't know about host: " + machineName , 0);
-			} catch (IOException e) {
+			} 
+			catch (IOException e) {
 				history.insert ("Couldn't get I/O for "
 						+ "the connection to: " + machineName , 0);
 			}
@@ -236,6 +239,8 @@ public class ClientGUI extends JFrame implements ActionListener
 				otherClients.removeAllElements();
 				clientList.setText(null);
 				history.insert("You have been disconnected from the server\n", 0);
+				this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	    		
 				out.close();
 				in.close();
 				echoSocket.close();
@@ -257,13 +262,14 @@ public class ClientGUI extends JFrame implements ActionListener
 		if(input.startsWith("ic")){			//initialize client
 			ID = input.substring(3);
 			IDLabel.setText("Your client ID: " + ID);
-			out.println("key " + ID + " " + E + " " + N );
-			setP();
-			setQ();
+			
 			setN();
 			setPhi();
 			setE();
 			setD();
+		
+			//Send encryption info to server
+			out.println("key " + ID + " " + E + " " + N );
 		}
 		else if(input.startsWith("io")){	//initialize otherClients
 			initializeClientList(input);
@@ -288,6 +294,7 @@ public class ClientGUI extends JFrame implements ActionListener
 			String msg = decrypt(in);
 			history.append("Client " + fromID + " sent: " + msg + "\n");
 		}
+		
 		else if(input.startsWith("key")){
 			String [] in = input.split(" ");
 			
@@ -297,8 +304,7 @@ public class ClientGUI extends JFrame implements ActionListener
 					o.setN(in[2]);
 					break;
 				}
-			}
-			
+			}	
 		}
 		
 		updateClientList();
@@ -321,7 +327,7 @@ public class ClientGUI extends JFrame implements ActionListener
 	void addNewlyConnected(String input){
 		String [] in = input.split(" ");
 		String id = in[1];
-		history.insert("Client " + id + " connected to the server\n", 0);
+		history.append("Client " + id + " connected to the server\n");
 		otherClients.add(new OtherClient(id, in[2], in[3]));
 		
 	}
@@ -329,11 +335,16 @@ public class ClientGUI extends JFrame implements ActionListener
 	void removeDisconnected(String input){
 		
 		String id = input.substring(2);
-		otherClients.remove(id);
+		for(OtherClient o : otherClients){
+			if(id.equals(o.getID())){
+				otherClients.remove(o);
+				break;
+			}
+		}
 		
 	}
 	//________________________________________________________________________//
-	String encryptMessage(String msg){
+	String encryptMessage(String msg, OtherClient client){
 
 		String result = "";
 		ArrayList<Character> splitMsg = new ArrayList<Character>();
@@ -358,14 +369,14 @@ public class ClientGUI extends JFrame implements ActionListener
 			for(int i = 0; i < BLOCKING_SIZE; i++){
 				block.add(splitMsg.remove(0));
 			}
-			System.out.println(block);
+			
 			value = BigInteger.valueOf(block.get(0)*(int)Math.pow(128, 0));
 			value = value.add(BigInteger.valueOf(block.get(1)*(int)Math.pow(128, 1)));
 			value = value.add(BigInteger.valueOf(block.get(2)*(int)Math.pow(128, 2)));
 			value = value.add(BigInteger.valueOf(block.get(3)*(int)Math.pow(128, 3)));
 			
 			
-			value = value.modPow(E, N);
+			value = value.modPow(new BigInteger(client.getE()), new BigInteger(client.getN()));
 						
 			result = result + " " + value;
 			
@@ -404,39 +415,71 @@ public class ClientGUI extends JFrame implements ActionListener
 		{
 			prime.add(Integer.parseInt(line));
 		}
-		for(int i = 0; i < prime.size(); i++)
-		{
-			System.out.println("Prime at: " + prime.get(i));
-		}
+		read.close();
 	}
 	//________________________________________________________________________//
 	void setP() {	
-		if(pText.getText() != "" || pText.getText() != null || (pText.equals("")))
-		{
+		
+		String userInput;
+		userInput = JOptionPane.showInputDialog(this, "Please enter a prime number greater than 16410 or cancel for default", "P", JOptionPane.QUESTION_MESSAGE);
+		
+		if(userInput != null ){
+			while(Integer.parseInt(userInput) < 16411 || !isPrime(Integer.parseInt(userInput))){
+				
+				userInput = JOptionPane.showInputDialog(this, "Value not valid. Enter a prime number greater than 16410 or cancel for default", "P", JOptionPane.QUESTION_MESSAGE);
+				if(userInput == null)
+					break;
+			}
+			 
+		}
+		if(userInput == null){
 			Collections.shuffle(prime);
-			P = prime.get(0);
-			
+			P = prime.get(0);	
 		}
 		else
-		{
-			P = Integer.parseInt(pText.getText());	
-		}
+			P = Integer.parseInt(userInput);
+		
 	}	
 	//________________________________________________________________________//
 	void setQ(){
-		if(qText.getText() != "" || qText.getText() != null || !(qText.equals("")))
-		{
+		
+		String userInput;
+		userInput = JOptionPane.showInputDialog(this, "Please enter another prime number greater than 16410 or cancel for default", "Q", JOptionPane.QUESTION_MESSAGE);
+		
+		if(userInput != null){
+			while(Integer.parseInt(userInput) < 16411 || !isPrime(Integer.parseInt(userInput)) || Integer.parseInt(userInput) == P){
+				
+				userInput = JOptionPane.showInputDialog(this, "Value not valid. Enter a different prime number greater than 16410 or cancel for default", "Q", JOptionPane.QUESTION_MESSAGE);
+				if(userInput == null)
+					break;
+			}
+			 
+		}
+		if(userInput == null){
 			Collections.shuffle(prime);
-			Q = prime.get(0);
+			Q = prime.get(0);	
 			if(Q == P)
 				Q = prime.get(1);
-			
 		}
 		else
-		{			
-			Q = Integer.parseInt(qText.getText());
-		}
+			Q = Integer.parseInt(userInput);
+
 	}	
+	//________________________________________________________________________//
+		//prime check taken code taken from https://beginnersbook.com/2014/01/java-program-to-check-prime-number/
+		private boolean isPrime(int num) {
+			int temp;
+			for(int i=2;i<=num/2;i++)
+			{
+		           temp=num%i;
+			   if(temp==0)
+			   {
+			      return false;
+			   }
+			}
+			return true;
+		}
+
 	//________________________________________________________________________//
 	int gcd(int a, int h)
 	{
@@ -471,11 +514,7 @@ public class ClientGUI extends JFrame implements ActionListener
 	void setPhi(){
 		
 		PHI = BigInteger.valueOf((P-1)*(Q-1));
-		
 	}
-	//________________________________________________________________________//
-	//________________________________________________________________________//
-
 	//________________________________________________________________________//
 	String decrypt(String msg){
 		
@@ -486,14 +525,13 @@ public class ClientGUI extends JFrame implements ActionListener
 		ArrayList<BigInteger> splitMsg = new ArrayList<BigInteger>();
 		
 		for(String s: temp){
-			System.out.println(s);
+			
 			splitMsg.add(new BigInteger(s));
 		}
 
 		for(BigInteger C: splitMsg){
 			
 			C = C.modPow(D, N);
-			System.out.println(C);
 			
 			while(true){
 				if(C.intValue() == 0)
@@ -509,10 +547,7 @@ public class ClientGUI extends JFrame implements ActionListener
 				if(c != 0){
 					result = result + c;
 				}
-				
-				
 			}
-			
 		}
 		
 		return result;
@@ -534,7 +569,7 @@ public class ClientGUI extends JFrame implements ActionListener
 		public CommunicationReadThread ()
 		{
 			start();
-			history.insert ("Communicating with Port\n", 0);
+			history.append ("Communicating with Port\n");
 		}
 
 		public void run()
@@ -548,7 +583,6 @@ public class ClientGUI extends JFrame implements ActionListener
 				{  
 
 					processInput(inputLine);
-					history.insert ("From Server: " + inputLine + "\n", 0);
 
 					if (inputLine.equals("Bye.")) 
 						break; 

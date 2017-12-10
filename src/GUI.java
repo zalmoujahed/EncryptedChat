@@ -43,7 +43,7 @@ public class GUI extends JFrame{
 		clientButton.addActionListener( new  ActionListener(){
 			public void actionPerformed( ActionEvent event ){
 				Client = new ClientGUI();
-				Client.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				Client.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 	    		
 	        }
 		});

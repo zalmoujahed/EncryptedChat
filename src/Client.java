@@ -27,18 +27,26 @@ public class Client {
 		output = pw;
 		 
 	}
+	public PrintWriter getOutput(){
+		return output;
+	}
 
 	public void sendMessage(String data)
 	{
 		output.println(data);
-		System.out.println("Server sent: " + data );
+		
 	}
 	
 	public void setKey(String e, String n){
-		
 		E = e;
 		N = n;
 		
+	}
+	public String getE(){
+		return E;
+	}
+	public String getN(){
+		return N;
 	}
 
 }

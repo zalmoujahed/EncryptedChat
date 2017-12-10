@@ -40,7 +40,7 @@ public class ServerGUI extends JFrame {
 		// set up the shared outStreamList
 		outStreamList = new Vector<PrintWriter>();
 		clients = new Vector<Client>();
-		
+
 		// get content pane and set its layout
 		Container container = getContentPane();
 		container.setLayout( new FlowLayout() );
@@ -80,17 +80,17 @@ public class ServerGUI extends JFrame {
 	}
 	//__________________________________________________________________________________//
 	public void updateClientList(){	
-		
+
 		clientList.setText(null);
-		
+
 		for(Client c: clients){
 			clientList.insert("Client " + c.getID() + "\n", 0);
 		}
-					
+
 	}
 	//__________________________________________________________________________________//
 	void processInput(String input){
-		
+
 		if(input.charAt(0) == 'm'){
 			relayMessage(input);
 		}
@@ -98,94 +98,88 @@ public class ServerGUI extends JFrame {
 			disconnectClient(input);
 		}
 		else if(input.startsWith("key")){
+						
 			String [] in = input.split(" ");
 			for(Client c : clients){
 				if(c.getID().equals(in[1])){
 					c.setKey(in[2], in[3]);
+					broadcast("c", "" + c.getID(),"" + c.getID() + " " + c.getE() + " " + c.getN());
+					//initialize other clients' info
+					String others = "";
+					for(Client o: clients){
+						if(!o.getID().equals(in[1])){
+							others += " " + o.getID() + " " + o.getE() + " " + o.getN();
+						}
+						
+					}
+					
+					c.getOutput().println("io" + others + " >>end<<");
+					
 					break;
 				}
 			}
+
 			
-			broadcast("key", input);
+			
 		}
-		
+
 		updateClientList();
-		
+
 	}
 	//__________________________________________________________________________________//
 	void relayMessage(String s){
-		
+
 		String [] sub = s.split(" ");
-		System.out.println(s);
 		String toID = sub[1];
-		
+
 		s.replaceFirst(" " + toID, "");
-		
-		System.out.println(s);
-		
+
 		for(Client c: clients){
 			if(c.getID().equals(toID)){
 				c.sendMessage(s);
 				break;
 			}
 		}
-		
+
 	}	
 	//__________________________________________________________________________________//
 	void disconnectClient(String s){
-		
+
 		//send out disconnection message
 		//update list
 		String id = s.substring(2);
 		history.insert(s, 0);
-		
+
 		for(Client c: clients){
 			if(c.getID().equals(id)){
 				clients.remove(c);
 				break;
 			}
 		}
-		broadcast("d", id);
-		
+		broadcast("d", id, id);
+
 	}
 	//__________________________________________________________________________________//
-	void broadcast(String type, String id){
-		
+	void broadcast(String type, String id, String message){
+
 		for(Client c: clients){
 			if(!c.getID().equals(id)){
 				if(type.equals("key")){
-					c.sendMessage(id);
+					c.sendMessage(message);
 				}
 				else
-					c.sendMessage(type + " "+ id);
+					c.sendMessage(type + " "+ message);
 			}
-				
-				
-				
-		}
-		
+		}	
 	}
 	//__________________________________________________________________________________//
 	void initializeClient(PrintWriter output){
-		
+
 		//initialize client info
 		output.println("ic "+ curID);
 		
-		//initialize other clients' info
-		String others = "";
-		
-		for(Client c: clients){
-			if(!c.getID().equals(curID)){
-				others += " " + c.getID();
-			}
-		}
-		//fix this
-		
-		output.println("io" + others + " >>end<<");
-		
-		broadcast("c", "" + curID);
 	}
-	
+
 	//__________________________________________________________________________________//
 	// handle button event
 	public void doButton( ActionEvent event )
@@ -225,7 +219,7 @@ public class ServerGUI extends JFrame {
 					{
 						ssButton.setText("Stop Listening");
 						new CommunicationThread (serverSocket.accept()); 
-						
+
 					}
 				} 
 				catch (IOException e) 
@@ -264,26 +258,26 @@ public class ServerGUI extends JFrame {
 			curID++;
 
 			c = new Client(clientSoc, "" + curID);
-			
+
 			clients.add(c);
-			
+
 			updateClientList();
-			
+
 			clientSocket = clientSoc;
 			history.insert ("Comminucating with Port" + clientSocket.getLocalPort()+"\n", 0);
-						
+
 			start();
 		}
 
 		public void run()
 		{
-			
+
 			try { 
 				PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true); 				
 				BufferedReader in = new BufferedReader( new InputStreamReader( clientSocket.getInputStream())); 
-				
+
 				c.setOutputStream(out);
-				
+
 				// Send an initializing message to the newly connected client
 				initializeClient(out);
 				
